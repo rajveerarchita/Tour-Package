@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tour Package Calculator</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    label { display: block; margin-top: 10px; }
+    input, select, button { margin-top: 5px; padding: 5px; }
+    #result { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Tour Package Price Calculator</h2>
+  
+  <label>Average Room Price (2 persons):</label>
+  <input type="number" id="roomPrice" value="2500">
+
+  <label>Extra Person Charge (if 3 persons in a room):</label>
+  <input type="number" id="extraPerson" value="500">
+
+  <label>Car Price per Car:</label>
+  <input type="number" id="carPrice" value="2500">
+
+  <label>Car Capacity (No. of persons):</label>
+  <input type="number" id="carCapacity" value="7">
+
+  <label>Meal Price per Person per Meal:</label>
+  <input type="number" id="mealPrice" value="300">
+
+  <label>Meal Plan:</label>
+  <select id="mealPlan">
+    <option value="CP">CP Plan (Breakfast only)</option>
+    <option value="MAP">MAP Plan (Breakfast + Dinner)</option>
+    <option value="AP">AP Plan (Breakfast + Lunch + Dinner)</option>
+  </select>
+
+  <label>Number of Persons:</label>
+  <input type="number" id="persons" value="4">
+
+  <button onclick="calculatePackage()">Calculate</button>
+
+  <div id="result"></div>
+
+  <script>
+    function calculatePackage() {
+      let persons = parseInt(document.getElementById("persons").value);
+      let roomPrice = parseInt(document.getElementById("roomPrice").value);
+      let extraPerson = parseInt(document.getElementById("extraPerson").value);
+      let carPrice = parseInt(document.getElementById("carPrice").value);
+      let carCapacity = parseInt(document.getElementById("carCapacity").value);
+      let mealPrice = parseInt(document.getElementById("mealPrice").value);
+      let mealPlan = document.getElementById("mealPlan").value;
+
+      // Meal plan multiplier
+      let mealsPerDay = 0;
+      if (mealPlan === "CP") mealsPerDay = 1;
+      if (mealPlan === "MAP") mealsPerDay = 2;
+      if (mealPlan === "AP") mealsPerDay = 3;
+
+      // Room calculation
+      let roomCost = 0;
+      let remaining = persons;
+      while (remaining > 0) {
+        if (remaining >= 3) {
+          roomCost += roomPrice + extraPerson; // 3 persons
+          remaining -= 3;
+        } else if (remaining === 2) {
+          roomCost += roomPrice; // 2 persons
+          remaining -= 2;
+        } else if (remaining === 1) {
+          roomCost += roomPrice + extraPerson; // 1 person (pay like 3 persons case)
+          remaining -= 1;
+        }
+      }
+
+      // Meals calculation
+      let mealCost = persons * mealPrice * mealsPerDay;
+
+      // Car calculation
+      let carCount = Math.ceil(persons / carCapacity);
+      let transportCost = carCount * carPrice;
+
+      // Total
+      let total = roomCost + mealCost + transportCost;
+      let perPerson = total / persons;
+
+      // Show result
+      document.getElementById("result").innerHTML =
+        "Total Package Cost: ₹" + total +
+        "<br>Per Person Cost: ₹" + perPerson.toFixed(2);
+    }
+  </script>
+</body>
+</html>
